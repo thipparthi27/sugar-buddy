@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Checklist — SugarBuddy</title>
+  <link rel="stylesheet" href="style.css"/></head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<body>
+  <main class="container">
+    <header class="page-header card"><a class="btn outline" href="dashboard.html">Back</a><h2>Daily Checklist</h2><div></div></header>
+    <section class="card">
+      <div id="checklist_items"></div>
+      <div class="actions"><button id="reset_check" class="btn outline">Reset Today</button><button id="save_check" class="btn">Save</button></div>
+      <p id="check_msg" class="muted"></p>
+    </section>
+  </main>
+
+  <script src="common.js"></script>
+  <script>
+    const checklistSpec = [
+  {t:'04:00', label:'Wake up', icon:'fas fa-sun', bg:'rgba(255,159,128,0.2)', color:'#FF9F80'},
+  {t:'04:00–04:30', label:'Fresh up', icon:'fas fa-shower', bg:'rgba(213,180,255,0.2)', color:'#D5B4FF'},
+  {t:'04:30–05:00', label:'Warm water & walking', icon:'fas fa-walking', bg:'rgba(74,195,255,0.2)', color:'#4AC3FF'},
+  {t:'05:00–05:30', label:'Yoga', icon:'fas fa-person-praying', bg:'rgba(108,99,255,0.15)', color:'#6C63FF'},
+  {t:'05:30–06:00', label:'Surya Namaskar', icon:'fas fa-sun', bg:'rgba(255,199,95,0.15)', color:'#FFC75F'},
+  {t:'06:00–07:00', label:'Jaap', icon:'fas fa-pray', bg:'rgba(255,110,199,0.15)', color:'#FF6EC7'},
+  {t:'07:00–08:00', label:'Insulin + Breakfast', icon:'fas fa-syringe', bg:'rgba(255,110,199,0.15)', color:'#FF6EC7'},
+  {t:'10:00', label:'Snack', icon:'fas fa-apple-alt', bg:'rgba(255,159,128,0.15)', color:'#FF9F80'},
+  {t:'12:30–13:30', label:'Lunch', icon:'fas fa-utensils', bg:'rgba(255,199,95,0.15)', color:'#FFC75F'},
+  {t:'16:00–16:30', label:'Snack', icon:'fas fa-apple-alt', bg:'rgba(255,159,128,0.15)', color:'#FF9F80'},
+  {t:'18:30–19:00', label:'Dinner', icon:'fas fa-utensils', bg:'rgba(255,199,95,0.15)', color:'#FFC75F'},
+  {t:'22:00', label:'Sleep', icon:'fas fa-bed', bg:'rgba(213,180,255,0.15)', color:'#D5B4FF'}
+];
+
+
+    function render(){
+      const id = getCurrentUserId(); const u = findUserById(id); if(!u) return location.href='start.html';
+      const tk = new Date().toISOString().slice(0,10);
+      u.history[tk] = u.history[tk] || {};
+      const todayChecks = u.history[tk].checklist || {};
+      const cont = document.getElementById('checklist_items'); cont.innerHTML = '';
+      checklistSpec.forEach((it, idx) => {
+        const key = 'c'+idx;
+        const done = !!todayChecks[key];
+        const row = document.createElement('div'); row.className = 'check-item' + (done? ' done':'');
+        row.innerHTML = `
+<div style="display:flex;gap:12px;align-items:center">
+    <div style="width:48px;height:48px;border-radius:10px;background:${it.bg};display:flex;align-items:center;justify-content:center;font-size:24px;color:${it.color};box-shadow:0 6px 14px rgba(0,0,0,0.06)">
+        <i class="${it.icon}"></i>
+    </div>
+    <div><strong style="font-size:16px">${it.label}</strong><div class="muted">${it.t}</div></div>
+</div>
+<div class="right-check">${done? '✔' : '<input type="checkbox" />'}</div>`;
+
+          
+        row.querySelector('.right-check').addEventListener('click', ()=>{
+          const users = loadUsers(); const uidx = users.findIndex(x=>x.id===id);
+          users[uidx].history[tk] = users[uidx].history[tk] || {}; users[uidx].history[tk].checklist = users[uidx].history[tk].checklist || {};
+          if(users[uidx].history[tk].checklist[key]) delete users[uidx].history[tk].checklist[key];
+          else users[uidx].history[tk].checklist[key] = {done:true, ts: Date.now()};
+          saveUsers(users); render();
+        });
+        cont.appendChild(row);
+      });
+    }
+
+    document.getElementById('reset_check').addEventListener('click', ()=>{
+      const id = getCurrentUserId(); const users = loadUsers(); const idx = users.findIndex(u=>u.id===id);
+      const tk = new Date().toISOString().slice(0,10);
+      users[idx].history[tk] = users[idx].history[tk] || {}; users[idx].history[tk].checklist = {};
+      saveUsers(users); render();
+    });
+    document.getElementById('save_check').addEventListener('click', ()=> {
+      document.getElementById('check_msg').innerText = 'Saved ✓';
+      setTimeout(()=> document.getElementById('check_msg').innerText = '', 1200);
+    });
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Sugar Log — SugarBuddy</title><link rel="stylesheet" href="style.css"/></head>
+<body>
+  <main class="container">
+    <header class="page-header card"><a class="btn outline" href="dashboard.html">Back</a><h2>Sugar Log (4×)</h2><div></div></header>
+    <section class="card">
+      <div class="big-grid">
+        <label class="big-label">07:00 AM (Morning)<input id="s_07" type="number"/></label>
+        <label class="big-label">10:00 AM (After Breakfast)<input id="s_10" type="number"/></label>
+        <label class="big-label">04:00 PM (Evening)<input id="s_16" type="number"/></label>
+        <label class="big-label">10:00 PM (Night)<input id="s_22" type="number"/></label>
+      </div>
+      <div class="actions"><button id="save_sugar" class="btn">Save</button></div>
+      <p id="sugar_msg" class="muted"></p>
+      <div id="sugar_history"></div>
+    </section>
+  </main>
+
+  <script src="common.js"></script>
+  <script>
+    function loadToday(){
+      const u = findUserById(getCurrentUserId()); if(!u) return location.href='start.html';
+      const tk = new Date().toISOString().slice(0,10);
+      const day = u.history[tk] || {};
+      const s = day.sugar || {};
+      document.getElementById('s_07').value = s.s07 || '';
+      document.getElementById('s_10').value = s.s10 || '';
+      document.getElementById('s_16').value = s.s16 || '';
+      document.getElementById('s_22').value = s.s22 || '';
+    }
+    document.getElementById('save_sugar').addEventListener('click', ()=>{
+      const id = getCurrentUserId(); const users = loadUsers(); const idx = users.findIndex(u=>u.id===id);
+      const tk = new Date().toISOString().slice(0,10);
+      users[idx].history[tk] = users[idx].history[tk] || {};
+      users[idx].history[tk].sugar = {
+        s07: document.getElementById('s_07').value || null,
+        s10: document.getElementById('s_10').value || null,
+        s16: document.getElementById('s_16').value || null,
+        s22: document.getElementById('s_22').value || null
+      };
+      saveUsers(users);
+      document.getElementById('sugar_msg').innerText = 'Saved ✓';
+      setTimeout(()=> document.getElementById('sugar_msg').innerText = '',1200);
+    });
+    loadToday();
+  </script>
+</body>
+</html>

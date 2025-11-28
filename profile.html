@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Profile — SugarBuddy</title><link rel="stylesheet" href="style.css"/></head>
+<body>
+  <main class="container">
+    <header class="page-header card"><a class="btn outline" href="dashboard.html">Back</a><h2>Profile</h2><div></div></header>
+    <section class="card">
+      <div class="form-row"><label>Full name</label><input id="p_name"></div>
+      <div class="row">
+        <div class="form-row small"><label>Age</label><input id="p_age" type="number"/></div>
+        <div class="form-row small"><label>Height (cm)</label><input id="p_height" type="number"/></div>
+        <div class="form-row small"><label>Weight (kg)</label><input id="p_weight" type="number"/></div>
+      </div>
+      <div class="row">
+        <div class="form-row small"><label>HbA1c (%)</label><input id="p_hba1c" step="0.1" type="number"/></div>
+        <div class="form-row small"><label>Target (%)</label><input id="p_target" step="0.1" type="number"/></div>
+        <div class="form-row small"><label>Language</label><select id="p_lang"><option value="en">English</option><option value="te">Telugu</option><option value="hi">Hindi</option></select></div>
+      </div>
+      <div class="actions"><button id="saveProfile" class="btn">Save Profile</button></div>
+      <p id="profile_msg" class="muted"></p>
+    </section>
+  </main>
+
+  <script src="common.js"></script>
+  <script>
+    const cur = getCurrentUserId(); if(!cur) location.href='start.html';
+    const user = findUserById(cur); if(!user) location.href='start.html';
+    document.getElementById('p_name').value = user.name || '';
+    document.getElementById('p_age').value = user.profile.age || '';
+    document.getElementById('p_height').value = user.profile.height || '';
+    document.getElementById('p_weight').value = user.profile.weight || '';
+    document.getElementById('p_hba1c').value = user.profile.hba1c || '';
+    document.getElementById('p_target').value = user.profile.target_hba1c || '';
+    document.getElementById('p_lang').value = user.profile.language || 'en';
+
+    document.getElementById('saveProfile').addEventListener('click', ()=>{
+      const id = getCurrentUserId(); const users = loadUsers(); const idx = users.findIndex(u=>u.id===id);
+      users[idx].name = document.getElementById('p_name').value.trim();
+      users[idx].profile.age = document.getElementById('p_age').value || null;
+      users[idx].profile.height = document.getElementById('p_height').value || null;
+      users[idx].profile.weight = document.getElementById('p_weight').value || null;
+      users[idx].profile.hba1c = document.getElementById('p_hba1c').value || null;
+      users[idx].profile.target_hba1c = document.getElementById('p_target').value || null;
+      users[idx].profile.language = document.getElementById('p_lang').value || 'en';
+      saveUsers(users);
+      document.getElementById('profile_msg').innerText = 'Saved ✓';
+      setTimeout(()=> document.getElementById('profile_msg').innerText = '', 1200);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>History — SugarBuddy</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 14px;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .mini-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #eee;
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header class="page-header card">
+      <a class="btn outline" href="calendar.html">Back</a>
+      <h2>History</h2>
+      <div></div>
+    </header>
+
+    <section class="card">
+      <div class="row" style="gap:8px;align-items:center">
+        <input type="date" id="historyDate" />
+        <button id="viewWeek" class="btn outline">Show 7-day summary</button>
+      </div>
+
+      <div id="dayHistory" style="margin-top:12px"></div>
+      <div id="weekSummary" style="margin-top:18px"></div>
+    </section>
+  </main>
+
+  <script src="common.js"></script>
+  <script>
+
+    function qs(n){ return new URLSearchParams(location.search).get(n); }
+
+    const dateParam = qs('date') || new Date().toISOString().slice(0,10);
+    document.getElementById('historyDate').value = dateParam;
+
+    function renderDay(dateStr){
+      const u = findUserById(getCurrentUserId());
+      if(!u) return;
+
+      const d = u.history[dateStr] || {};
+      const sugar = d.sugar || {};
+      const meals = d.meals || "-";
+
+      const insulinList = (d.insulin || []).map(i =>
+        `<li>${i.insulin} — ${i.units} units at ${i.time}</li>`
+      ).join("");
+
+      document.getElementById('dayHistory').innerHTML = `
+        <h3>${dateStr}</h3>
+
+        <h4>Blood Sugar Log</h4>
+        <table class="mini-table">
+          <tr><td>07:00 AM</td><td>${sugar.s07 ?? "-"}</td></tr>
+          <tr><td>10:00 AM</td><td>${sugar.s10 ?? "-"}</td></tr>
+          <tr><td>04:00 PM</td><td>${sugar.s16 ?? "-"}</td></tr>
+          <tr><td>10:00 PM</td><td>${sugar.s22 ?? "-"}</td></tr>
+        </table>
+
+        <h4>Meals</h4>
+        <div>${meals}</div>
+
+        <h4>Water Intake</h4>
+        <div>${(d.water_ml||0)} ml (${((d.water_ml||0)/1000).toFixed(2)} L)</div>
+
+        <h4>Checklist</h4>
+        <div>${Object.keys(d.checklist || {}).join(", ") || "-"}</div>
+
+        <h4>Insulin</h4>
+        <ul>${insulinList || "<li>-</li>"}</ul>
+      `;
+    }
+
+    function renderWeek(dateStr){
+      const base = new Date(dateStr);
+      const arr = [];
+
+      for(let i=6;i>=0;i--){
+        const dt=new Date(base);
+        dt.setDate(base.getDate()-i);
+        const key=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+        arr.push(key);
+      }
+
+      const u = findUserById(getCurrentUserId());
+      if(!u) return;
+
+      const rows = arr.map(k=>{
+        const d=u.history[k]||{};
+        const sugar=d.sugar||{};
+        const valid=[sugar.s07,sugar.s10,sugar.s16,sugar.s22].filter(x=>x);
+        const avg = valid.length ? Math.round(valid.reduce((a,b)=>a+Number(b),0)/valid.length) : "-";
+
+        return `
+          <div class="card mini">
+            <strong>${k}</strong> • sugar avg: ${avg}
+            • water: ${(d.water_ml||0)/1000} L
+            • tasks: ${Object.keys(d.checklist||{}).length}
+            • insulin: ${(d.insulin||[]).length}
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById('weekSummary').innerHTML = `<h3>7-day summary</h3>${rows}`;
+    }
+
+    document.getElementById('historyDate').onchange = e=>{
+      renderDay(e.target.value);
+      renderWeek(e.target.value);
+    };
+    document.getElementById('viewWeek').onclick = ()=>{
+      renderWeek(document.getElementById('historyDate').value);
+    };
+
+    renderDay(dateParam);
+    renderWeek(dateParam);
+
+  </script>
+</body>
+</html>

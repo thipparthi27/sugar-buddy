@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Register — SugarBuddy</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="center-page">
+  <div class="card auth-card animated-card">
+    <div class="top-ill">
+      <img class="ill small" src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="">
+      <div class="animated-text">Create your SugarBuddy ✨</div>
+    </div>
+
+    <h2>Create Account</h2>
+    <div class="form-row"><label>Full name</label><input id="reg_name" placeholder="Full name"/></div>
+    <div class="form-row"><label>Email (optional)</label><input id="reg_email" placeholder="email@example.com"/></div>
+    <div class="form-row"><label>Mobile (optional)</label><input id="reg_mobile" placeholder="+91xxxxxxxxxx"/></div>
+    <div class="form-row"><label>Password</label><input id="reg_pass" type="password" placeholder="Choose a password"/></div>
+
+    <div class="actions">
+      <button id="btnRegister" class="btn">Register</button>
+      <a class="btn outline" href="start.html">Back</a>
+    </div>
+    <p id="reg_msg" class="muted"></p>
+    <p class="muted">Already have an account? <a href="login.html">Login</a></p>
+  </div>
+
+  <script src="common.js"></script>
+  <script>
+    document.getElementById('btnRegister').addEventListener('click', ()=>{
+      const name = document.getElementById('reg_name').value.trim();
+      const email = document.getElementById('reg_email').value.trim();
+      const mobile = document.getElementById('reg_mobile').value.trim();
+      const pass = document.getElementById('reg_pass').value.trim();
+      const msg = document.getElementById('reg_msg'); msg.innerText='';
+      if(!name || !pass || (!email && !mobile)){ msg.innerText='Enter name, password and email or mobile.'; return; }
+      const users = loadUsers();
+      if(email && users.some(u=>u.email && u.email.toLowerCase()===email.toLowerCase())){ msg.innerText='Email already used.'; return; }
+      if(mobile && users.some(u=>u.mobile && u.mobile===mobile)){ msg.innerText='Mobile already used.'; return; }
+      const newUser = newUserTemplate(name,email||null,mobile||null,pass);
+      users.push(newUser); saveUsers(users);
+      setCurrentUserId(newUser.id);
+      msg.innerText = 'Registered ✓ Opening dashboard...';
+      setTimeout(()=> location.href='dashboard.html',700);
+    });
+  </script>
+</body>
+</html>

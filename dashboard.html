@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dashboard — SugarBuddy</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="drawer">
+    <aside class="drawer-side card" id="sidePanel">
+      <div class="drawer-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" class="avatar" alt="avatar">
+        <div>
+          <strong id="sideName">User</strong>
+          <div id="sideEmail" class="muted"></div>
+        </div>
+      </div>
+      <nav class="drawer-nav">
+        <a href="dashboard.html" class="nav-item">Home</a>
+        <a href="meals.html" class="nav-item">Meals</a>
+        <a href="sugar.html" class="nav-item">Sugar Log</a>
+        <a href="checklist.html" class="nav-item">Checklist</a>
+        <a href="water.html" class="nav-item">Water</a>
+        <a href="insulin.html" class="nav-item">Insulin</a>
+        <a href="calendar.html" class="nav-item">Calendar</a>
+        <a href="history.html" class="nav-item">History</a>
+        <a href="profile.html" class="nav-item">Profile</a>
+        <a id="logoutDrawer" class="nav-item danger">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="dash-header card">
+        <button id="openDrawer" class="btn outline">☰</button>
+        <div class="header-center">
+          <h2 id="userHello">Hello</h2>
+          <div id="dashDate" class="muted"></div>
+        </div>
+        <div>
+          <button id="notifyBtn" class="btn">Enable Reminders</button>
+        </div>
+      </header>
+
+      <section class="card hero card-center">
+        <div class="hero-left">
+          <div id="heroLottie" style="width:160px;height:160px"></div>
+        </div>
+        <div class="hero-right">
+          <h3>Welcome back, <span id="heroName">Friend</span> ✨</h3>
+          <p class="muted">Tap any tile below to open the feature. Use the side menu for profile & history.</p>
+          <div class="actions" style="justify-content:flex-start;">
+            <a class="btn" href="meals.html">Meals</a>
+            <a class="btn outline" href="checklist.html">Checklist</a>
+            <a class="btn" href="water.html">Water</a>
+          </div>
+        </div>
+      </section>
+
+      <<section class="card features-card">
+    <div class="grid-tiles">
+
+        <!-- Meals -->
+        <a class="tile" href="meals.html">
+            <div class="tile-icon-wrapper" style="background: rgba(255,159,128,0.2);">
+                <i class="fas fa-bread-slice" style="color:#FF9F80;"></i>
+            </div>
+            <div class="tile-title">Meals</div>
+            <div class="tile-sub muted">Weekly plan</div>
+        </a>
+
+        <!-- Sugar Log -->
+        <a class="tile" href="sugar.html">
+            <div class="tile-icon-wrapper" style="background: rgba(255,107,129,0.2);">
+                <i class="fas fa-heart-pulse" style="color:#FF6B81;"></i>
+            </div>
+            <div class="tile-title">Sugar Log</div>
+            <div class="tile-sub muted">4 readings</div>
+        </a>
+
+        <!-- Checklist -->
+        <a class="tile" href="checklist.html">
+            <div class="tile-icon-wrapper" style="background: rgba(108,99,255,0.15);">
+                <i class="fas fa-list-check" style="color:#6C63FF;"></i>
+            </div>
+            <div class="tile-title">Checklist</div>
+            <div class="tile-sub muted">Daily routine</div>
+        </a>
+
+        <!-- Water -->
+        <a class="tile" href="water.html">
+            <div class="tile-icon-wrapper" style="background: rgba(74,195,255,0.15);">
+                <i class="fas fa-water" style="color:#4AC3FF;"></i>
+            </div>
+            <div class="tile-title">Water</div>
+            <div class="tile-sub muted">4–5 L</div>
+        </a>
+
+        <!-- Insulin -->
+        <a class="tile" href="insulin.html">
+            <div class="tile-icon-wrapper" style="background: rgba(255,110,199,0.15);">
+                <i class="fas fa-syringe" style="color:#FF6EC7;"></i>
+            </div>
+            <div class="tile-title">Insulin</div>
+            <div class="tile-sub muted">Schedule</div>
+        </a>
+
+        <!-- Calendar -->
+        <a class="tile" href="calendar.html">
+            <div class="tile-icon-wrapper" style="background: rgba(255,199,95,0.15);">
+                <i class="fas fa-calendar-check" style="color:#FFC75F;"></i>
+            </div>
+            <div class="tile-title">Calendar</div>
+            <div class="tile-sub muted">History</div>
+        </a>
+
+    </div>
+</section>
+
+
+  <script src="common.js"></script>
+  <script>
+    // ensure logged in
+    const cur = getCurrentUserId(); if(!cur) location.href='start.html';
+    const user = findUserById(cur); if(!user) location.href='start.html';
+    document.getElementById('userHello').innerText = 'Hello, ' + (user.name || 'Friend');
+    document.getElementById('dashDate').innerText = new Date().toLocaleString(undefined,{weekday:'long', month:'short', day:'numeric'});
+    document.getElementById('sideName').innerText = user.name || '';
+    document.getElementById('sideEmail').innerText = user.email || user.mobile || '';
+    document.getElementById('heroName').innerText = user.name || 'Friend';
+
+    // hero lottie
+    try {
+      lottie.loadAnimation({ container: document.getElementById('heroLottie'), renderer:'svg', loop:true, autoplay:true, path:'https://assets5.lottiefiles.com/packages/lf20_sF7lSg.json' });
+    } catch(e){}
+
+    // drawer toggle
+    document.getElementById('openDrawer').addEventListener('click', ()=> {
+      document.getElementById('sidePanel').classList.toggle('open');
+    });
+    document.getElementById('logoutDrawer').addEventListener('click', ()=>{
+      clearCurrentUser(); location.href='start.html';
+    });
+
+    // notifications
+    document.getElementById('notifyBtn').addEventListener('click', async ()=>{
+      if(!('Notification' in window)){ alert('Notifications not supported'); return; }
+      const perm = await Notification.requestPermission();
+      if(perm !== 'granted'){ alert('Please allow notifications'); return; }
+      scheduleHourlyReminders(); scheduleInsulinAlarms();
+      alert('Reminders enabled while the app is open.');
+    });
+
+    // ensure history
+    ensureTodayHistoryForCurrentUser(); scheduleMidnightReset();
+    if(Notification.permission === 'granted'){ scheduleHourlyReminders(); scheduleInsulinAlarms(); }
+  </script>
+  <script src="https://unpkg.com/lottie-web@5.9.6/build/player/lottie.min.js"></script>
+</body>
+</html>

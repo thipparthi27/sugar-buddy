@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SugarBuddy – Splash</title>
+
+<style>
+    body {
+        margin: 0;
+        background: linear-gradient(180deg, #FFD6E8, #E2D4FF);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        font-family: "Poppins", sans-serif;
+    }
+
+    .container {
+        text-align: center;
+        animation: fadeIn 2s ease-in-out;
+    }
+
+    .app-title {
+        font-size: 38px;
+        color: #b3448a;
+        font-weight: 700;
+        margin-top: 20px;
+        animation: floatUp 2s ease-in-out;
+    }
+
+    .tagline {
+        font-size: 18px;
+        margin-top: 10px;
+        color: #7a3370;
+        animation: floatUp 2.3s ease-in-out;
+    }
+
+    .cute-girl {
+        width: 260px;
+        animation: popIn 1.6s ease-out;
+    }
+
+    /* Get Started button */
+    .get-started-btn {
+        margin-top: 25px;
+        padding: 12px 28px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #fff;
+        background: #b3448a;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: 0.3s;
+        animation: floatUp 2.5s ease-in-out;
+    }
+
+    .get-started-btn:hover {
+        background: #a1337a;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    @keyframes popIn {
+        0% { transform: scale(0.4); opacity: 0; }
+        80% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes floatUp {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <img class="cute-girl" 
+              src="https://www.shutterstock.com/shutterstock/photos/2286925481/display_1500/stock-vector-vector-illustration-of-a-glucometer-a-cartoon-scene-with-a-girl-a-diabetes-test-an-apple-and-2286925481.jpg"
+         alt="Cute diabetic girl" />
+    <div class="app-title">SugarBuddy</div>
+    <div class="tagline">Let’s get started! 💖</div>
+
+    <!-- GET STARTED BUTTON NAVIGATES TO start.html -->
+    <button class="get-started-btn" onclick="location.href='start.html'">Get Started</button>
+</div>
+
+</body>
+</html>

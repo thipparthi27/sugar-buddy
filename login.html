@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Login — SugarBuddy</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="center-page">
+  <div class="card auth-card animated-card">
+    <div class="top-ill">
+      <img class="ill small" src="https://cdn-icons-png.flaticon.com/512/747/747545.png" alt="">
+      <div class="animated-text">Let's log you in ✨</div>
+    </div>
+
+    <h2>Login</h2>
+    <div class="form-row"><label>Login (email / mobile / name)</label><input id="login_id" placeholder="example@example.com or +91xxxx or YourName"/></div>
+    <div class="form-row"><label>Password</label><input id="login_pass" type="password" placeholder="Password"/></div>
+
+    <div class="actions">
+      <button id="btnLogin" class="btn">Login</button>
+      <a class="btn outline" href="start.html">Back</a>
+    </div>
+    <p id="login_msg" class="muted"></p>
+
+    <p class="muted">New here? <a href="register.html">Create account</a></p>
+  </div>
+
+  <script src="common.js"></script>
+  <script>
+    document.getElementById('btnLogin').addEventListener('click', ()=>{
+      const id = document.getElementById('login_id').value.trim();
+      const pass = document.getElementById('login_pass').value.trim();
+      const msg = document.getElementById('login_msg'); msg.innerText='';
+      if(!id || !pass){ msg.innerText='Enter login id and password.'; return; }
+      const u = findUserByLoginId(id);
+      if(!u){ msg.innerText='No account found.'; return; }
+      if(u.password !== pass){ msg.innerText='Incorrect password.'; return; }
+      setCurrentUserId(u.id);
+      msg.innerText = 'Welcome back ✓';
+      setTimeout(()=> location.href='dashboard.html', 450);
+    });
+  </script>
+</body>
+</html>

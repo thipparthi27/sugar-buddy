@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Insulin — SugarBuddy</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+<main class="container">
+
+  <header class="page-header card">
+    <a class="btn outline" href="dashboard.html">Back</a>
+    <h2>Insulin</h2>
+    <div></div>
+  </header>
+
+  <section class="card">
+
+    <p class="muted">Default schedule (editable later):</p>
+    <ul>
+      <li><strong>07:00</strong> — Human Actrapid — <strong>15 units</strong></li>
+      <li><strong>12:30</strong> — Human Actrapid — <strong>20 units</strong></li>
+      <li><strong>19:00</strong> — Human Actrapid — <strong>15 units</strong></li>
+      <li><strong>22:00</strong> — Baslog — <strong>20 units</strong></li>
+    </ul>
+
+    <div class="form-row">
+      <label>Select insulin</label>
+      <select id="ins_name">
+        <option value="">-- choose --</option>
+        <option>Human Actrapid</option>
+        <option>Baslog</option>
+        <option>Novorapid</option>
+        <option>Humalog</option>
+        <option>Tresiba</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label>Time</label>
+      <input id="ins_time" type="time"/>
+    </div>
+
+    <div class="form-row">
+      <label>Units</label>
+      <input id="ins_units" type="number" placeholder="units" min="0"/>
+    </div>
+
+    <div class="actions">
+      <button id="save_ins" class="btn">Log Dose</button>
+    </div>
+
+    <p id="ins_msg" class="muted"></p>
+  </section>
+
+</main>
+
+<script src="common.js"></script>
+
+<script>
+document.getElementById('save_ins').addEventListener('click', ()=>{
+
+  const name = document.getElementById('ins_name').value;
+  const time = document.getElementById('ins_time').value;
+  const units = document.getElementById('ins_units').value;
+
+  if(!name || !time || !units){
+    document.getElementById('ins_msg').innerText = "Enter insulin name, time, and units.";
+    return;
+  }
+
+  const id = getCurrentUserId(); 
+  const users = loadUsers();
+  const idx = users.findIndex(u => u.id === id);
+
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  users[idx].history[dateStr] = users[idx].history[dateStr] || {};
+  users[idx].history[dateStr].insulin = users[idx].history[dateStr].insulin || [];
+
+  users[idx].history[dateStr].insulin.push({
+    insulin: name,
+    time: time,
+    units: units,
+    ts: Date.now()
+  });
+
+  saveUsers(users);
+
+  document.getElementById('ins_msg').innerText = "Insulin logged ✓";
+
+  setTimeout(() => document.getElementById('ins_msg').innerText = "", 1500);
+
+  document.getElementById('ins_time').value = "";
+  document.getElementById('ins_units').value = "";
+  document.getElementById('ins_name').value = "";
+});
+</script>
+
+</body>
+</html>
