@@ -37,7 +37,28 @@ Users can:
 - JavaScript
 - Local browser storage (localStorage)
 
-## Project Structure
+   
+## Notes
+
+- The app stores user data in the browser using localStorage.
+- This is designed as a personal wellness tracker and reminder tool.
+- It is not a medical device and should not replace professional medical advice.
+  
+## Purpose
+
+SugarBuddy aims to make daily diabetes management easier, more organized, and more encouraging through a simple, user-friendly interface.
+
+## Future Enhancements
+
+- Backend integration
+- Real database storage
+- Charts and analytics
+- Export/import of health records
+- Push notifications
+- Dark mode
+- Multi-language support
+
+  ## Project Structure
 
 ```bash
 diabetics/
@@ -56,4 +77,3 @@ diabetics/
 ├── profile.html
 ├── common.js
 ├── style.css
-      
